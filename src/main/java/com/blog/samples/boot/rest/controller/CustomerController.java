@@ -19,13 +19,10 @@ import com.blog.samples.boot.rest.exception.InvalidCustomerRequestException;
 import com.blog.samples.boot.rest.model.Customer;
 import com.blog.samples.boot.rest.repository.CustomerRepository;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * Customer Controller exposes a series of RESTful endpoints
  */
 @RestController
-@Slf4j
 public class CustomerController {
 
 	@Autowired
@@ -64,8 +61,6 @@ public class CustomerController {
 	@RequestMapping(value = "/rest/customers", method = RequestMethod.GET)
 	public @ResponseBody List<Customer> getcustomers() {
 		
-		log.debug("Getting all customers...");
-		
 		return (List<Customer>) customerRepository.findAll();
 	}
 
@@ -80,14 +75,8 @@ public class CustomerController {
 	public @ResponseBody Customer createcustomer(@RequestBody Customer customer, HttpServletResponse httpResponse, WebRequest request) {
 
 		Customer createdcustomer = null;
-		log.debug(String.format("Creating customer ", customer.toString()));
-
 		createdcustomer = customerRepository.save(customer);		
-
-		/* set HTTP response code */
 		httpResponse.setStatus(HttpStatus.CREATED.value());
-
-		/* set location of created resource */
 		httpResponse.setHeader("Location", String.format("%s/rest/customers/%s", request.getContextPath(), customer.getId()));
 		
 		return createdcustomer;
@@ -102,8 +91,6 @@ public class CustomerController {
 	@RequestMapping(value = { "/rest/customers/{customerId}" }, method = { RequestMethod.PUT })
 	public void updatecustomer(@RequestBody Customer customer, @PathVariable("customerId") Long customerId,
 								   		  HttpServletResponse httpResponse) {
-
-		log.debug("Updating customer: " + customer.toString());
 
 		if(!customerRepository.exists(customerId)){
 			httpResponse.setStatus(HttpStatus.NOT_FOUND.value());
@@ -122,8 +109,6 @@ public class CustomerController {
 	 */
 	@RequestMapping(value = "/rest/customers/{customerId}", method = RequestMethod.DELETE)
 	public void removecustomer(@PathVariable("customerId") Long customerId, HttpServletResponse httpResponse) {
-
-		log.debug("Deleting customer Id: " + customerId.toString());
 
 		if(customerRepository.exists(customerId)){
 			customerRepository.delete(customerId);	
