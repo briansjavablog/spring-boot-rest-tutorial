@@ -13,13 +13,13 @@ public class ControllerExceptionHandler {
 
 	@ResponseStatus(HttpStatus.NOT_FOUND) // 404
 	@ExceptionHandler(CustomerNotFoundException.class)
-	public void handleNotFound() {
+	public void handleNotFound(CustomerNotFoundException ex) {
 		log.error("Resource not found");
 	}
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST) // 400
 	@ExceptionHandler(InvalidCustomerRequestException.class)
-	public void handleBadRequest() {
+	public void handleBadRequest(InvalidCustomerRequestException ex) {
 		log.error("Invalid Fund Request");
 	}
 	

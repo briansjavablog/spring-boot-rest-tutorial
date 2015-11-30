@@ -12,7 +12,7 @@ import javax.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity(name="customer")
+@Entity
 public class Customer{
 
 	public Customer(){}

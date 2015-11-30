@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity(name="address")
+@Entity(name="")
 public class Address{
 
 	public Address(){}

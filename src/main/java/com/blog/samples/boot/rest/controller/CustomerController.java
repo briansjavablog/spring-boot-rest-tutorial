@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
@@ -36,7 +35,7 @@ public class CustomerController {
 	 * @return retrieved customer
 	 */
 	@RequestMapping(value = "/rest/customers/{customerId}", method = RequestMethod.GET)
-	public @ResponseBody Customer getcustomer(@PathVariable("customerId") Long customerId) {
+	public Customer getCustomer(@PathVariable("customerId") Long customerId) {
 		
 		/* validate customer Id parameter */
 		if (null==customerId) {
@@ -59,7 +58,7 @@ public class CustomerController {
 	 * @return the customers
 	 */
 	@RequestMapping(value = "/rest/customers", method = RequestMethod.GET)
-	public @ResponseBody List<Customer> getcustomers() {
+	public List<Customer> getCustomers() {
 		
 		return (List<Customer>) customerRepository.findAll();
 	}
@@ -72,7 +71,7 @@ public class CustomerController {
 	 * @return created customer
 	 */
 	@RequestMapping(value = { "/rest/customers" }, method = { RequestMethod.POST })
-	public @ResponseBody Customer createcustomer(@RequestBody Customer customer, HttpServletResponse httpResponse, WebRequest request) {
+	public Customer createCustomer(@RequestBody Customer customer, HttpServletResponse httpResponse, WebRequest request) {
 
 		Customer createdcustomer = null;
 		createdcustomer = customerRepository.save(customer);		
@@ -89,7 +88,7 @@ public class CustomerController {
 	 * @param customer the customer
 	 */
 	@RequestMapping(value = { "/rest/customers/{customerId}" }, method = { RequestMethod.PUT })
-	public void updatecustomer(@RequestBody Customer customer, @PathVariable("customerId") Long customerId,
+	public void updateCustomer(@RequestBody Customer customer, @PathVariable("customerId") Long customerId,
 								   		  HttpServletResponse httpResponse) {
 
 		if(!customerRepository.exists(customerId)){
@@ -108,7 +107,7 @@ public class CustomerController {
 	 * @param customerId the customer id
 	 */
 	@RequestMapping(value = "/rest/customers/{customerId}", method = RequestMethod.DELETE)
-	public void removecustomer(@PathVariable("customerId") Long customerId, HttpServletResponse httpResponse) {
+	public void removeCustomer(@PathVariable("customerId") Long customerId, HttpServletResponse httpResponse) {
 
 		if(customerRepository.exists(customerId)){
 			customerRepository.delete(customerId);	

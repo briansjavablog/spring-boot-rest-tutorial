@@ -1,6 +1,7 @@
 package com.blog.samples.boot.rest.controller.test;
 
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -52,6 +53,8 @@ public class CustomerControllerIT {
 	@Autowired
 	private CustomerRepository customerRepository;
 	
+	private static final String JSON_CONTENT_TYPE = "application/json;charset=UTF-8"; 
+	
 	
 	@Before
 	public void setUp() throws Exception {
@@ -78,6 +81,7 @@ public class CustomerControllerIT {
 		Long customerId = getCustomerIdByFirstName("Joe");
 		ResponseEntity<String> response = template.getForEntity(String.format("%s/%s", base.toString(), customerId), String.class);
 		assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+		assertThat(response.getHeaders().getContentType().toString(), equalTo(JSON_CONTENT_TYPE));
 		
 		Customer customer = convertJsonToCustomer(response.getBody());
 		
@@ -98,6 +102,8 @@ public class CustomerControllerIT {
 
 		ResponseEntity<String> response = template.postForEntity("http://localhost:" + port + "/rest/customers", customer, String.class);
 		assertThat(response.getStatusCode(), equalTo(HttpStatus.CREATED));
+		assertThat(response.getHeaders().getContentType().toString(), equalTo(JSON_CONTENT_TYPE));
+		assertThat(response.getHeaders().getFirst("Location"), containsString("/rest/customers/"));
 		
 		Customer returnedCustomer = convertJsonToCustomer(response.getBody());		
 		assertThat(customer.getFirstName(), equalTo(returnedCustomer.getFirstName()));
@@ -115,6 +121,7 @@ public class CustomerControllerIT {
 		Long customerId = getCustomerIdByFirstName("Joe");
 		ResponseEntity<String> getCustomerResponse = template.getForEntity(String.format("%s/%s", base.toString(), customerId), String.class);
 		assertThat(getCustomerResponse.getStatusCode(), equalTo(HttpStatus.OK));
+		assertThat(getCustomerResponse.getHeaders().getContentType().toString(), equalTo(JSON_CONTENT_TYPE));
 		
 		Customer returnedCustomer = convertJsonToCustomer(getCustomerResponse.getBody());
 		assertThat(returnedCustomer.getFirstName(), equalTo("Joe"));
@@ -143,6 +150,7 @@ public class CustomerControllerIT {
 		/* GET updated customer and ensure name is updated as expected */
 		ResponseEntity<String> getUpdatedCustomerResponse = template.getForEntity(String.format("%s/%s", base.toString(), customerId), String.class);
 		assertThat(getCustomerResponse.getStatusCode(), equalTo(HttpStatus.OK));
+		assertThat(getCustomerResponse.getHeaders().getContentType().toString(), equalTo(JSON_CONTENT_TYPE));
 		
 		Customer updatedCustomer = convertJsonToCustomer(getUpdatedCustomerResponse.getBody());
 		assertThat(updatedCustomer.getFirstName(), equalTo("Wayne"));
@@ -160,6 +168,7 @@ public class CustomerControllerIT {
 		Long customerId = getCustomerIdByFirstName("Joe");		
 		ResponseEntity<String> response = template.getForEntity(String.format("%s/%s", base.toString(), customerId), String.class);
 		assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
+		assertThat(response.getHeaders().getContentType().toString(), equalTo(JSON_CONTENT_TYPE));
 		
 		Customer customer = convertJsonToCustomer(response.getBody());
 		assertThat(customer.getFirstName(), equalTo("Joe"));
@@ -176,6 +185,13 @@ public class CustomerControllerIT {
 		/* attempt to get customer and ensure qwe get a 404 */
 		ResponseEntity<String> secondCallResponse = template.getForEntity(String.format("%s/%s", base.toString(), customerId), String.class);
 		assertThat(secondCallResponse.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
+	}
+	
+	@Test
+	public void getNonExistantCustomerReturnsError404() throws Exception {
+		
+		ResponseEntity<String> response = template.getForEntity(String.format("%s/%s", base.toString(), 999999), String.class);
+		assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));		
 	}
 	
 	/**
