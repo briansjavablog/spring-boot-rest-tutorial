@@ -1,6 +1,5 @@
 package com.blog.samples.boot.rest.controller.test;
 
-
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
@@ -28,7 +27,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.client.RestTemplate;
 
-import com.blog.samples.boot.main.Application;
+import com.blog.samples.Application;
 import com.blog.samples.boot.rest.data.DataBuilder;
 import com.blog.samples.boot.rest.model.Address;
 import com.blog.samples.boot.rest.model.Customer;
