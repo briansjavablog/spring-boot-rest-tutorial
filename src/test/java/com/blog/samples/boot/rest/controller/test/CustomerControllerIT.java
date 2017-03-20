@@ -6,9 +6,9 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.List;
 
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,6 +52,9 @@ public class CustomerControllerIT {
 	@Autowired
 	private CustomerRepository customerRepository;
 	
+	@Autowired
+	private ObjectMapper objectMapper;
+	
 	private static final String JSON_CONTENT_TYPE = "application/json;charset=UTF-8"; 
 	
 	
@@ -86,7 +89,7 @@ public class CustomerControllerIT {
 		
 		assertThat(customer.getFirstName(), equalTo("Joe"));
 		assertThat(customer.getLastName(), equalTo("Smith"));
-		assertThat(customer.getDateOfBirth().toString(), equalTo("Sun Jan 10 00:00:00 GMT 1982"));
+		assertThat(customer.getDateOfBirth(), equalTo(LocalDate.of(1982, 1, 10)));
 		assertThat(customer.getAddress().getStreet(), equalTo("High Street"));
 		assertThat(customer.getAddress().getTown(), equalTo("Belfast"));
 		assertThat(customer.getAddress().getCounty(), equalTo("Down"));
@@ -96,7 +99,7 @@ public class CustomerControllerIT {
 	@Test
 	public void createCustomer() throws Exception {
 
-		Customer customer = new Customer("Gary", "Steale", DateTime.parse("1984-03-08").toDate(),
+		Customer customer = new Customer("Gary", "Steale", LocalDate.of(1984,  3,  8),/*DateTime.parse("1984-03-08").toDate()*/
 				new Address("Main Street", "Portadown", "Armagh", "BT359JK"));
 
 		ResponseEntity<String> response = template.postForEntity("http://localhost:" + port + "/rest/customers", customer, String.class);
@@ -125,15 +128,14 @@ public class CustomerControllerIT {
 		Customer returnedCustomer = convertJsonToCustomer(getCustomerResponse.getBody());
 		assertThat(returnedCustomer.getFirstName(), equalTo("Joe"));
 		assertThat(returnedCustomer.getLastName(), equalTo("Smith"));
-		assertThat(returnedCustomer.getDateOfBirth().toString(), equalTo("Sun Jan 10 00:00:00 GMT 1982"));
+		assertThat(returnedCustomer.getDateOfBirth(), equalTo(LocalDate.of(1982, 1, 10)));
 		assertThat(returnedCustomer.getAddress().getStreet(), equalTo("High Street"));
 		assertThat(returnedCustomer.getAddress().getTown(), equalTo("Belfast"));
 		assertThat(returnedCustomer.getAddress().getCounty(), equalTo("Down"));
 		assertThat(returnedCustomer.getAddress().getPostcode(), equalTo("BT893PY"));
 		
 		/* convert JSON response to Java and update name */
-		ObjectMapper mapper = new ObjectMapper();
-		Customer customerToUpdate = mapper.readValue(getCustomerResponse.getBody(), Customer.class);
+		Customer customerToUpdate = objectMapper.readValue(getCustomerResponse.getBody(), Customer.class);
 		customerToUpdate.setFirstName("Wayne");
 		customerToUpdate.setLastName("Rooney");
 
@@ -154,7 +156,7 @@ public class CustomerControllerIT {
 		Customer updatedCustomer = convertJsonToCustomer(getUpdatedCustomerResponse.getBody());
 		assertThat(updatedCustomer.getFirstName(), equalTo("Wayne"));
 		assertThat(updatedCustomer.getLastName(), equalTo("Rooney"));
-		assertThat(updatedCustomer.getDateOfBirth().toString(), equalTo("Sun Jan 10 00:00:00 GMT 1982"));
+		assertThat(updatedCustomer.getDateOfBirth(), equalTo(LocalDate.of(1982, 1, 10)));
 		assertThat(updatedCustomer.getAddress().getStreet(), equalTo("High Street"));
 		assertThat(updatedCustomer.getAddress().getTown(), equalTo("Belfast"));
 		assertThat(updatedCustomer.getAddress().getCounty(), equalTo("Down"));
@@ -172,7 +174,7 @@ public class CustomerControllerIT {
 		Customer customer = convertJsonToCustomer(response.getBody());
 		assertThat(customer.getFirstName(), equalTo("Joe"));
 		assertThat(customer.getLastName(), equalTo("Smith"));
-		assertThat(customer.getDateOfBirth().toString(), equalTo("Sun Jan 10 00:00:00 GMT 1982"));
+		assertThat(customer.getDateOfBirth(), equalTo(LocalDate.of(1982,  1, 10)));
 		assertThat(customer.getAddress().getStreet(), equalTo("High Street"));
 		assertThat(customer.getAddress().getTown(), equalTo("Belfast"));
 		assertThat(customer.getAddress().getCounty(), equalTo("Down"));
@@ -206,12 +208,12 @@ public class CustomerControllerIT {
 	}
 	
 	private Customer convertJsonToCustomer(String json) throws Exception {		
-		ObjectMapper mapper = new ObjectMapper();
-		return mapper.readValue(json, Customer.class);
+		//ObjectMapper mapper = new ObjectMapper();
+		return objectMapper.readValue(json, Customer.class);
 	}
 	
 	private List<Customer> convertJsonToCustomers(String json) throws Exception {		
-		ObjectMapper mapper = new ObjectMapper();
-		return mapper.readValue(json, TypeFactory.defaultInstance().constructCollectionType(List.class, Customer.class));
+		//ObjectMapper mapper = new ObjectMapper();
+		return objectMapper.readValue(json, TypeFactory.defaultInstance().constructCollectionType(List.class, Customer.class));
 	}
 }

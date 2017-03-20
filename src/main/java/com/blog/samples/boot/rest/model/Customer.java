@@ -1,6 +1,6 @@
 package com.blog.samples.boot.rest.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -17,7 +17,7 @@ public class Customer{
 
 	public Customer(){}
 	
-	public Customer(String firstName, String lastName, Date dateOfBirth, Address address) {
+	public Customer(String firstName, String lastName, LocalDate dateOfBirth, Address address) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -41,7 +41,7 @@ public class Customer{
 	
 	@Setter	
 	@Getter
-	private Date dateOfBirth;
+	private LocalDate dateOfBirth;
 
 	@Setter
 	@Getter
